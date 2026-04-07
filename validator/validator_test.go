@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/fujiwara/go-amzn-oidc/validator"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var privateKey, _ = ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
@@ -85,9 +85,6 @@ func TestValidate(t *testing.T) {
 		claims, err := validator.ValidateWithKeyURLGenerator(ctx, data, gen)
 		if err != nil {
 			t.Error("validate failed", err)
-		}
-		if claims.Valid() != nil {
-			t.Error("token is not valid")
 		}
 		if claims.Email() != "foo@example.com" {
 			t.Error("unexpected email", claims.Email())

@@ -10,13 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/shogo82148/go-retry"
 )
-
-func init() {
-	jwt.DecodePaddingAllowed = true
-}
 
 // RetryPolicy represents a policy for retrying http request to key URL.
 var RetryPolicy = retry.Policy{
@@ -43,7 +39,8 @@ func ValidateWithContext(ctx context.Context, data string) (Claims, error) {
 
 func validateWithKeyURLGenerator(ctx context.Context, data string, gen keyURLGenerator) (Claims, error) {
 	claims := make(Claims, 0)
-	_, err := jwt.ParseWithClaims(data, &claims, func(token *jwt.Token) (interface{}, error) {
+	parser := jwt.NewParser(jwt.WithPaddingAllowed())
+	_, err := parser.ParseWithClaims(data, &claims, func(token *jwt.Token) (interface{}, error) {
 		keyURL, err := gen(token)
 		if err != nil {
 			return nil, err
